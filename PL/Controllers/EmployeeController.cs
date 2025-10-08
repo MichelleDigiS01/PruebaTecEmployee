@@ -159,10 +159,35 @@ namespace PL.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    employee = await response.Content.ReadFromJsonAsync<ML.Employee>();
 
-                    employee.City.Cities = resultCities.Objects;
-                    employee.Education.Educations = resulEdu.Objects;
+                    var result = await response.Content.ReadFromJsonAsync<ML.Result>();
+
+                    if (result.Correct)
+                    {
+                        ML.Employee employeeObj = JsonConvert.DeserializeObject<ML.Employee>(result.Object.ToString());
+
+                        employee = employeeObj;
+                        employee.City.Cities = resultCities.Objects;
+                        employee.Education.Educations = resulEdu.Objects;
+
+
+
+                    }
+
+
+
+
+
+                    //employee = await response.Content.ReadFromJsonAsync<ML.Employee>();
+
+                    //// Solución: inicializa si es null
+                    //if (employee.City == null)
+                    //    employee.City = new ML.City();
+                    //employee.City.Cities = resultCities.Objects;
+
+                    //if (employee.Education == null)
+                    //    employee.Education = new ML.Education();
+                    //employee.Education.Educations = resulEdu.Objects;
                 }
                 else
                 {

@@ -71,7 +71,7 @@ namespace PL.Controllers
 
                 // Correlación Experiencia/Pago
                 var expResult = chartBL.GetCorrelationExperiencePayment();
-                var wsExp = workbook.Worksheets.Add("Experiencia/Pago");
+                var wsExp = workbook.Worksheets.Add("ExperienciaPago");
                 wsExp.Cell(1, 1).Value = "Tier Pago";
                 wsExp.Cell(1, 2).Value = "Experiencia Promedio";
                 wsExp.Cell(1, 3).Value = "Total Empleados";
