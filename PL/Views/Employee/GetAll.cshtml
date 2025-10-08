@@ -1,0 +1,257 @@
+﻿@model ML.Employee
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Employees</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <button id="btnBusqueda" class="btn btn-secondary w-100">Busqueda</button>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("GetAll", "Employee", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card mt-2" id="busquedaForm" style="display: none;">
+                    <h5 class="card-header">Busqueda</h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mt-2">
+
+                                @Html.LabelFor(model => model.JoiningYear)
+                                @Html.TextBoxFor(model => model.JoiningYear, new { @class = "form-control" })
+
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                @Html.LabelFor(model => model.PaymentTier)
+                                @Html.DropDownListFor(model => model.PaymentTier,
+                                new SelectList(new[] {
+                                                        new {Value = "", Text = "Seleccione..."},
+                                                        new { Value = "1", Text = "1" },
+                                                        new { Value = "2", Text = "2" },
+                                                        new { Value = "3", Text = "3" }
+                                                        }, "Value", "Text"),
+                                                        new { @class = "form-control" })
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mt-2">
+                            @Html.LabelFor(model => model.Age)
+                            @Html.TextBoxFor(model => model.Age, new { @class = "form-control" })
+
+                        </div>
+                        <div class="col-md-4 mt-2">
+
+                            @Html.LabelFor(model => model.EverBenched)
+                            @Html.DropDownListFor(model => model.EverBenched,
+                                                        new SelectList(new[] {
+                                                        new { Value = "", Text = "Seleccione..." },
+                                                        new { Value = "Yes", Text = "Sí" },
+                                                        new { Value = "No", Text = "No" }
+                                                        }, "Value", "Text"),
+                                                        new { @class = "form-control" })
+
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            @Html.LabelFor(model => model.Experience)
+                            @Html.DropDownListFor(model => model.Experience,
+                                                        new SelectList(new[] {
+                                                        new {Value = "", Text = "Seleccione..."},
+                                                        new { Value = "1", Text = "1" },
+                                                        new { Value = "2", Text = "2" },
+                                                        new { Value = "3", Text = "3" },
+                                                        new { Value = "4", Text = "4" },
+                                                        new { Value = "5", Text = "5" },
+                                                        new { Value = "6", Text = "6" },
+                                                        new { Value = "7", Text = "7" }
+                                                        }, "Value", "Text"),
+                                                        new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+
+                            <label class="form-label d-block">LeaveOrNot</label>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(model => model.LeaveOrNot, "true", new { @class = "form-check-input", id = "leaveTrue" })
+                                <label class="form-check-label" for="leaveTrue">True</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(model => model.LeaveOrNot, "false", new { @class = "form-check-input", id = "leaveFalse" })
+                                <label class="form-check-label" for="leaveFalse">False</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label d-block">Gender</label>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(model => model.Gender.IdGender, "1", new { @class = "form-check-input", id = "genderMale" })
+                                <label class="form-check-label" for="genderMale">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(model => model.Gender.IdGender, "2", new { @class = "form-check-input", id = "genderFemale" })
+                                <label class="form-check-label" for="genderFemale">Female</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mt-2">
+                            @Html.LabelFor(model => model.Education.IdEducation, "Education")
+                            @Html.DropDownListFor(model => model.Education.IdEducation, new SelectList(Model.Education.Educations, "IdEducation", "Name"), "Seleccione education", new { @class = "form-control", @id = "ddlEducation" })
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            @Html.LabelFor(model => model.City.IdCity, "City")
+                            @Html.DropDownListFor(model => model.City.IdCity, new SelectList(Model.City.Cities, "IdCity", "Name"), "Seleccione city", new { @class = "form-control", @id = "ddlCity" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mt-2 offset-md-5">
+                        <button type="submit" class="btn btn-outline-success">Buscar</button>
+
+
+                        <button type="reset" id="btnCancelar" class="btn btn-outline-danger">Cancelar</button>
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+        }
+
+    <div class=" col-md-12 mt-3">
+        @Html.ActionLink("Agregar Employee", "Form", "Employee", new { IdEmployee = 0 }, new { @class = "btn btn-success" })
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <div class="row mt-3">
+        <div class="table-responsive">
+
+            <table class="table">
+                @if (Model.Employees != null)
+                {
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>JoiningYear</th>
+                            <th>PaymentTier</th>
+                            <th>Age</th>
+                            <th>EverBenched</th>
+                            <th>Experience</th>
+                            <th>LeaveOrNot</th>
+                            <th>City</th>
+                            <th>Education</th>
+                            <th>Gender</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ML.Employee employee in Model.Employees)
+                        {
+                            <tr>
+                                <td>@employee.IdEmployee</td>
+                                <td>@employee.JoiningYear</td>
+                                <td>@employee.PaymentTier</td>
+                                <td>@employee.Age</td>
+                                <td>@employee.EverBenched</td>
+                                <td>@employee.Experience</td>
+                                <td>@employee.LeaveOrNot</td>
+                                <td>@employee.City?.Name</td>
+                                <td>@employee.Education?.Name</td>
+                                <td>@employee.Gender?.Name</td>
+                                <td>
+                                    <a class="btn btn-warning" href="@Url.Action("Form", "Employee", new { IdEmployee = employee.IdEmployee })">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                                        </svg>
+                                    </a>
+
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="EmployeeDelete(@employee.IdEmployee)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash2-fill" viewBox="0 0 16 16">
+                                            <path d="M2.037 3.225A.7.7 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2a.7.7 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671zm9.89-.69C10.966 2.214 9.578 2 8 2c-1.58 0-2.968.215-3.926.534-.477.16-.795.327-.975.466.18.14.498.307.975.466C5.032 3.786 6.42 4 8 4s2.967-.215 3.926-.534c.477-.16.795-.327.975-.466-.18-.14-.498-.307-.975-.466z" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que deseas eliminar?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a id="btnEliminarEmployee" href="" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+@* Cualquier linea de estas manda a llamar a JS *@
+
+<script>
+    function EmployeeDelete(IdEmployee) {
+        $('#btnEliminarEmployee').attr('href','@Url.Action("Delete", "Employee")' + '?IdEmployee=' + IdEmployee)
+    }
+
+        $(document).ready(function () {
+        // Mostrar/ocultar formulario de búsqueda
+        $('#btnBusqueda').click(function () {
+            $('#busquedaForm').slideToggle();      // Alterna el actual
+        });
+
+        // Cancelar búsqueda
+        $('#btnCancelar').click(function () {
+            $('#busquedaForm').slideUp();
+        });
+
+    });
+
+</script>
+

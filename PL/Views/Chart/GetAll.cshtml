@@ -1,0 +1,342 @@
+﻿@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Bootstrap y Chart.js -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .chart-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-bottom: 30px;
+        height: 100%;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+
+    h2.title {
+        margin: 40px 0 30px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center title">Panel de Análisis de Empleados</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">Distribución por Género</h5>
+                <div class="chart-container">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">Distribución por Ciudad</h5>
+                <div class="chart-container">
+                    <canvas id="cityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mt-3">
+            <div class="chart-card">
+                <h5 class="text-center">Nivel Educativo</h5>
+                <div class="chart-container">
+                    <canvas id="educationChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mt-3">
+            <div class="chart-card">
+                <h5 class="text-center">Distribución por Edad</h5>
+                <div class="chart-container">
+                    <canvas id="ageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <div class="chart-card">
+                <h5 class="text-center">Correlación Experiencia</h5>
+                <div class="chart-container text-center">
+                    <canvas id="experienceTierChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <div class="chart-card shadow-sm p-3 rounded bg-light">
+                <h5 class="text-center mb-3">Predicción de abandono</h5>
+
+                <div class="text-center mb-2">
+                    <h3 id="leavePercentage" class="fw-bold text-danger">0%</h3>
+                </div>
+
+                <div class="chart-container text-center">
+                    <canvas id="leavePredictionChart" style="max-width: 350px; margin: auto;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-end mb-3">
+            <form asp-action="ExportChartsToExcel" asp-controller="Chart" method="post">
+                <button type="submit" class="btn btn-primary">
+                    Exportar datos a Excel
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        renderGenderChart();
+        renderCityChart();
+        renderEducationChart();
+        renderAgeChart();
+        renderExperienceTierChart();
+        renderLeavePrediction();
+    });
+
+    const apiBase = "https://localhost:7180/api/Charts";
+
+    function renderGenderChart() {
+        $.ajax({
+            url: `${apiBase}/gender`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                const data = response.objects;
+                const ctx = document.getElementById("genderChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "pie",
+                    data: {
+                        labels: data.map(x => x.gender),
+                        datasets: [{
+                            data: data.map(x => x.totalEmployees),
+                            backgroundColor: ["#00B7CC", "#FF7B2E"]
+                        }]
+                    }
+                });
+            }
+        });
+    }
+
+    function renderCityChart() {
+        $.ajax({
+            url: `${apiBase}/city`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                const data = response.objects;
+                const ctx = document.getElementById("cityChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: data.map(x => x.city),
+                        datasets: [{
+                            label: "Empleados",
+                            data: data.map(x => x.totalEmployees),
+                            backgroundColor: "#4CAF50"
+                        }]
+                    }
+                });
+            }
+        });
+    }
+
+    function renderEducationChart() {
+        $.ajax({
+            url: `${apiBase}/education`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                const data = response.objects;
+                const ctx = document.getElementById("educationChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: data.map(x => x.education),
+                        datasets: [{
+                            data: data.map(x => x.totalEmployees),
+                            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
+                        }]
+                    }
+                });
+            }
+        });
+    }
+
+    function renderAgeChart() {
+        $.ajax({
+            url: `${apiBase}/averageAge`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                const data = response.objects;
+                const ctx = document.getElementById("ageChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: data.map(x => x.city),
+                        datasets: [{
+                            label: "Empleados",
+                            data: data.map(x => x.averageAge),
+                            borderColor: "#FF7B2E",
+                            backgroundColor: "rgba(255, 123, 46, 0.2)",
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    }
+                });
+            }
+        });
+    }
+
+
+    function renderExperienceTierChart() {
+        $.ajax({
+            url: `${apiBase}/CorrelationExperiencePayment`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                if (!response.correct) {
+                    alert("Error al obtener los datos del servidor.");
+                    return;
+                }
+
+                const data = response.objects;
+
+                const labels = data.map(x => "Tier " + x.paymentTier);
+                const avgExperience = data.map(x => x.avgExperience);
+                const totalEmployees = data.map(x => x.totalEmployees);
+
+ 
+                const ctx = document.getElementById("experienceTierChart");
+
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "Experiencia Promedio (Años)",
+                                data: avgExperience,
+                                backgroundColor: "#007bff",
+                                yAxisID: 'y1'
+                            },
+                            {
+                                label: "Total de Empleados",
+                                data: totalEmployees,
+                                backgroundColor: "#ffc107",
+                                yAxisID: 'y2'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "Correlación entre Experiencia y Nivel de Pago"
+                            }
+                        },
+                        scales: {
+                            y1: {
+                                type: 'linear',
+                                position: 'left',
+                                title: { display: true, text: 'Experiencia Promedio' },
+                                beginAtZero: true
+                            },
+                            y2: {
+                                type: 'linear',
+                                position: 'right',
+                                title: { display: true, text: 'Total de Empleados' },
+                                beginAtZero: true,
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en la solicitud:", error);
+                alert("Error al conectar con la API.");
+            }
+        });
+    }
+
+    function renderLeavePrediction() {
+        $.ajax({
+            url: `${apiBase}/leavePediction`,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                if (!response.correct) {
+                    alert("Error al obtener la tasa de abandono.");
+                    return;
+                }
+
+                const leavePercentage = response.object;
+
+                const stayPercentage = 100 - leavePercentage;
+
+                // Mostrar valor numérico en el encabezado
+                $("#leavePercentage").text(`${leavePercentage.toFixed(1)}%`);
+
+                // Crear gráfica circular (doughnut)
+                const ctx = document.getElementById("leavePredictionChart");
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Abandono", "Permanencia"],
+                        datasets: [{
+                            data: [leavePercentage, stayPercentage],
+                            backgroundColor: ["#dc3545", "#198754"],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: "bottom" },
+                            title: { display: false }
+                        },
+                        cutout: "65%", // hace el gráfico más tipo “donut”
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert("Error al conectar con la API.");
+            }
+        });
+    }
+
+</script>
+
