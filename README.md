@@ -45,16 +45,16 @@ Incluye funcionalidades de autenticación, CRUD de empleados, panel de análisis
 
 ---
 
-## ⚙️ Instalación y configuración
+## Instalación y configuración
 
-### 🧩 Requisitos previos
+### Requisitos previos
 
 - .NET Core 8 
 - SQL Server 2012 o superior  
 - Visual Studio 2022 
 - Navegador Edge, Chrome o Firefox
 
-### 🧩 Pasos de instalación
+### Pasos de instalación
 
 1. Clonar el repositorio:
    ```
@@ -75,38 +75,38 @@ Incluye funcionalidades de autenticación, CRUD de empleados, panel de análisis
 
 ---
 
-## 🧠 Funcionalidades implementadas
+## Funcionalidades implementadas
 
-### 🔐 Autenticación y Roles
+### Autenticación y Roles
 - Inicio de sesión mediante JWT Tokens.  
 - Roles disponibles: **RRHH**, **Gerente**, **Analista**.  
 - Control de acceso por rol a vistas específicas.
 
-### 👩‍💼 CRUD de Empleados
+### CRUD de Empleados
 - Alta, consulta, edición y eliminación de registros.  
 - Búsqueda avanzada con filtros (género, educación, ciudad, experiencia, etc.). 
 
-### 📊 Panel de Análisis
+### Panel de Análisis
 - Visualización de métricas y tendencias mediante **Chart.js**:  
   - Distribución por **Género**  
   - Distribución por **Ciudad**  
   - Correlación **Experiencia vs Nivel de Pago**  
   - Tasa de **Abandono (LeaveOrNot)**  
 
-### 📤 Exportación de Reportes
+### Exportación de Reportes
 - Botones de exportación a CSV desde el dashboard.  
 - Reportes disponibles:
   - Diversidad (género, ciudad, educación)  
   - Rotación (abandono)  
   - Talento (experiencia vs nivel de pago)
 
-### 📱 Diseño responsivo
+### Diseño responsivo
 - Implementado con **Bootstrap 5**.  
 - Compatible con dispositivos móviles, tablet y escritorio.
 
 ---
 
-## 🧩 Endpoints principales (API)
+## Endpoints principales (API)
 
 | Método | Endpoint | Descripción |
 |--------|-----------|-------------|
@@ -126,10 +126,10 @@ Incluye funcionalidades de autenticación, CRUD de empleados, panel de análisis
 
 ---
 
-## 🧑‍💻 Autor
+## Autor
 
 **Michelle Zoé Palomino Gómez**  
-📧 michellezoe01@hotmail.com  
+michellezoe01@hotmail.com  
 
 ---
 
