@@ -1,8 +1,10 @@
 ﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PL.Controllers
 {
+    [Authorize(Roles ="RRHH, Analista")]
     public class ChartController : Controller
     {
         public IActionResult GetAll()

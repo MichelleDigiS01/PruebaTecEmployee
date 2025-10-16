@@ -27,4 +27,8 @@
     <ProjectReference Include="..\ML\ML.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Excel\" />
+  </ItemGroup>
+
 </Project>

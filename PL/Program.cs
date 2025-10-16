@@ -40,6 +40,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 var app = builder.Build();
 
@@ -58,53 +65,9 @@ app.UseRouting();
 
 
 
-
-// Token
-
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-
-//    .AddJwtBearer(options =>
-//    {
-//        options.Events = new JwtBearerEvents
-
-//        {
-
-//            OnMessageReceived = context =>
-
-//            {
-
-//                var token = context.Request.Cookies["JwtToken"];
-
-//                if (!string.IsNullOrEmpty(token))
-
-//                {
-
-//                    context.Token = token;
-
-//                }
-
-//                return Task.CompletedTask;
-
-//            },
-
-//            OnChallenge = context =>
-
-//            {
-
-//                context.HandleResponse();
-
-//                context.Response.Redirect("/Login/Login");
-
-//                return Task.CompletedTask;
-
-//            }
-
-//        };
-
-//    });
-
-
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

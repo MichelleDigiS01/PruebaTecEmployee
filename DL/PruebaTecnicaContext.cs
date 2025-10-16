@@ -140,8 +140,7 @@ public partial class PruebaTecnicaContext : DbContext
 
             entity.Property(e => e.Name)
                 .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("Gender");
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Rol>(entity =>

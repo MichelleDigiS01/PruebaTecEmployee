@@ -16,5 +16,12 @@ namespace BL
         {
             return BCrypt.Net.BCrypt.Verify(Password, hashedPassword);
         }
+
+        public static void PrintHashForWelcome01()
+        {
+            string password = "Welcome01";
+            string hashed = HashPassword(password);
+            Console.WriteLine($"Hash para Welcome01: {hashed}");
+        }
     }
 }

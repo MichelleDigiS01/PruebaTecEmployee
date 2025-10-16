@@ -2,14 +2,19 @@
 @{
     ViewData["Title"] = "GetAll";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string sessionValue = Context.Session.GetString("rutaCorrectosExcel");
 }
 
 <h1>Employees</h1>
 
 <div class="container">
     <div class="row">
-        <div class="col-12">
+        <div class="col-6">
             <button id="btnBusqueda" class="btn btn-secondary w-100">Busqueda</button>
+        </div>
+
+        <div class="col-6">
+            <button id="btnCargaMasiva" type="button" class="btn btn-primary w-100">Carga Masiva</button>
         </div>
     </div>
 
@@ -66,6 +71,7 @@
                             @Html.DropDownListFor(model => model.Experience,
                                                         new SelectList(new[] {
                                                         new {Value = "", Text = "Seleccione..."},
+                                                        new { Value = "0", Text = "0" },
                                                         new { Value = "1", Text = "1" },
                                                         new { Value = "2", Text = "2" },
                                                         new { Value = "3", Text = "3" },
@@ -134,15 +140,51 @@
 
 
     </div>
+    @* Form Carga Masiva *@
+    <div class="row">
+        <div class=" col-md-12">
+            <div class="card mt-2" id="formularioCargaMasiva" style="display: none;">
+                <h5 class="card-header">Carga Masiva</h5>
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-12 mt-2 offset-5">
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="tipoArchivo" id="fileExcel" value="excel">
+                                <label class="form-check-label" for="fileExcel">Excel</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mt-2 offset-4">
+
+                                <input type="file" id="archivoInput" name="archivo" />
+                                <div id="errorArchivo" class="text-danger mt-2" style="display: none;"></div>
+
+                                <button type="submit" class="btn btn-primary">Validar</button>
 
 
+                                @if (Context.Session.GetString("rutaCorrectosExcel") != null)
+                                    {
+                                        @Html.ActionLink("Guardar", "GuardarCargaMasiva", "Employee", new { }, new { @class = "btn btn-success" })
+                                    }
 
-        }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class=" col-md-12 mt-3">
-        @Html.ActionLink("Agregar Employee", "Form", "Employee", new { IdEmployee = 0 }, new { @class = "btn btn-success" })
-    </div>
+            <div class=" col-md-12 mt-3">
+                @Html.ActionLink("Agregar Employee", "Form", "Employee", new { IdEmployee = 0 }, new { @class = "btn btn-success" })
+            </div>
+        </div>
+    }
 
+    
     @if (ViewBag.Error != null)
     {
         <div class="alert alert-danger">@ViewBag.Error</div>
@@ -243,12 +285,38 @@
         $(document).ready(function () {
         // Mostrar/ocultar formulario de búsqueda
         $('#btnBusqueda').click(function () {
+            $('#formularioCargaMasiva').slideUp();
             $('#busquedaForm').slideToggle();      // Alterna el actual
         });
 
         // Cancelar búsqueda
         $('#btnCancelar').click(function () {
             $('#busquedaForm').slideUp();
+        });
+
+        $('#btnCargaMasiva').click(function () {
+            $('#busquedaForm').slideUp();              // Oculta el otro formulario
+            $('#formularioCargaMasiva').slideToggle(); // Alterna el actual
+        });
+
+        $('#archivoInput').on('change', function () {
+            const archivo = this.files[0];
+            const tipo = $('input[name="tipoArchivo"]:checked').val();
+            const errorDiv = $('#errorArchivo');
+
+            errorDiv.hide().text(''); // Limpia mi mensaje anterior
+
+            if (!archivo) return; // No hace nada si no hay archivo
+
+            const extension = archivo.name.split('.').pop().toLowerCase();
+
+            const esValido = (tipo === 'txt' && extension === 'txt') ||
+                             (tipo === 'excel' && ['xls', 'xlsx', 'csv'].includes(extension));
+
+            if (!esValido) {
+                errorDiv.text('El tipo de archivo no coincide con la opción seleccionada.').show();
+                this.value = ''; // Limpia el input para forzar nueva selección
+            }
         });
 
     });

@@ -1,0 +1,97 @@
+﻿@model ML.Employee
+
+@{
+    ViewData["Title"] = "_Modal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="modal fade" id="archivosModal" tabindex="-1" aria-labelledby="resultadoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Info de Archivo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div>
+                        @if (Model.Errores.Count > 0)
+                        {
+                            <h2>Errores</h2>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Errores</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var error in Model.Errores)
+                                    {
+                                        string[] errores = error.ToString().Split("|");
+                                        string linea = errores.Length > 0 ? errores[0] : "N/A";
+
+                                        <tr>
+                                            <th>@linea </th>
+                                            <td class="text-danger">
+                                                @for (int i = 1; i < errores.Length; i++)
+                                                {
+                                                    <span>
+                                                        @errores[i]
+                                                    </span>
+                                                    <br />
+                                                }
+
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+
+                    </div>
+
+                    @if (Model.Correctos != null)
+                    {
+                        <h2>Correctos</h2>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Registro</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var correcto in Model.Correctos)
+                                {
+                                    var partes = correcto.ToString().Split('|');
+                                    <tr>
+                                        <th>@partes[0]</th>
+                                        <td>@partes[1]</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Errores.Count > 0 || Model.Correctos.Count > 0)
+{
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script>
+        $( document ).ready(function() {
+            $('#archivosModal').modal('show');
+        });
+    </script>
+}

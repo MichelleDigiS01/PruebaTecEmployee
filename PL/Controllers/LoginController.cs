@@ -20,6 +20,7 @@ namespace PL.Controllers
         }
         public IActionResult Login()
         {
+            
             return View();
         }
 
@@ -37,8 +38,7 @@ namespace PL.Controllers
 
                     string token2 = apiResult.Object?.ToString()?.Trim('"');
 
-                    //var tokenProperty = apiResult.Object.GetType().GetProperty("Token");
-                    //var token = tokenProperty?.GetValue(apiResult.Object)?.ToString();
+                    
 
                     if (!string.IsNullOrEmpty(token2))
                     {

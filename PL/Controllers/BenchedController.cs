@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace PL.Controllers
 {
+    [Authorize(Roles ="Gerente")]
     public class BenchedController : Controller
     {
         private readonly HttpClient _httpClient;

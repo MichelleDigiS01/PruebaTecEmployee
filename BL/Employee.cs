@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Data.OleDb;
 
 namespace BL
 {
@@ -11,7 +13,105 @@ namespace BL
             _context = context;
         }
 
+        public static ML.Result Excel(string connectionString)
+        {
+            ML.Result result = new ML.Result();
 
+            try
+            {
+                // Obtén las listas de referencia
+                var cities = BL.City.GetAll().Objects.Cast<ML.City>().ToList();
+                var educations = BL.Education.GetAll().Objects.Cast<ML.Education>().ToList();
+                var genders = BL.Gender.GetAll().Objects.Cast<ML.Gender>().ToList();
+
+                using (OleDbConnection context = new OleDbConnection(connectionString))
+                {
+                    OleDbCommand oleDbCommand = new OleDbCommand();
+                    oleDbCommand.Connection = context;
+                    oleDbCommand.CommandText = "SELECT * FROM [Sheet1$]";
+                    context.Open();
+                    OleDbDataAdapter oleDbDataAdapter = new OleDbDataAdapter(oleDbCommand);
+                    DataTable dataTable = new DataTable();
+                    oleDbDataAdapter.Fill(dataTable);
+
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        result.Objects = new List<object>();
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            ML.Employee employee = new ML.Employee();
+                            employee.Education = new ML.Education();
+                            employee.Gender = new ML.Gender();
+                            employee.City = new ML.City();
+
+                            // Mapeo por nombre
+                            string educationName = row["Education"].ToString();
+                            var education = educations.FirstOrDefault(e => e.Name.Equals(educationName, StringComparison.OrdinalIgnoreCase));
+                            employee.Education.IdEducation = education?.IdEducation ?? 0;
+
+                            employee.JoiningYear = Convert.ToInt32(row["JoiningYear"]);
+                            
+                            string cityName = row["City"].ToString();
+                            var city = cities.FirstOrDefault(c => c.Name.Equals(cityName, StringComparison.OrdinalIgnoreCase));
+                            employee.City.IdCity = city?.IdCity ?? 0;
+
+                            employee.PaymentTier = Convert.ToByte(row["PaymentTier"]);
+                            employee.Age = Convert.ToInt32(row["Age"]);
+
+                            string genderName = row["Gender"].ToString();
+                            var gender = genders.FirstOrDefault(g => g.Name.Equals(genderName, StringComparison.OrdinalIgnoreCase));
+                            employee.Gender.IdGender = gender?.IdGender ?? 0;
+
+                            employee.EverBenched = row["EverBenched"].ToString();
+                            employee.Experience = Convert.ToByte(row["ExperienceInCurrentDomain"]);
+                            employee.LeaveOrNot = Convert.ToBoolean(row["LeaveOrNot"]);
+
+                            result.Objects.Add(employee);
+                        }
+                        result.Correct = true;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.ErrorMessage = ex.Message;
+                result.Correct = false;
+            }
+
+            return result;
+        }
+        public static ML.Result AddExcel(ML.Employee employee)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.PruebaTecnicaContext context = new DL.PruebaTecnicaContext())
+                {
+                    var query = context.Database.ExecuteSqlInterpolated($@"EXEC EmployeeAdd {employee.JoiningYear},{employee.PaymentTier},{employee.Age},{employee.EverBenched},{employee.Experience},{employee.LeaveOrNot},{employee.City.IdCity},{employee.Gender.IdGender}, {employee.Education.IdEducation}");
+
+                    if (query > 0)
+                    {
+                        result.Correct = true;
+
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.Correct = false;
+                result.ErrorMessage = ex.Message;
+                result.Ex = ex;
+            }
+
+            return result;
+        }
         public ML.Result GetAll(ML.Employee employee)
         {
             ML.Result result = new ML.Result();
@@ -98,6 +198,7 @@ namespace BL
 
             return result;
         }
+        
 
         public ML.Result GetById(int idEmployee)
         {
@@ -169,8 +270,8 @@ namespace BL
             try
             {
                 var ResultQuery = (from employeDb in _context.Employees
-                                        where employeDb.IdEmployee == employee.IdEmployee
-                                        select employeDb).SingleOrDefault();
+                                   where employeDb.IdEmployee == employee.IdEmployee
+                                   select employeDb).SingleOrDefault();
 
 
                 if (ResultQuery != null)
@@ -210,7 +311,7 @@ namespace BL
 
             try
             {
-                
+
                 var resultQuery = (from employeeDb in _context.Employees
                                    where employeeDb.IdEmployee == idEmployee
                                    select employeeDb).First();
@@ -287,7 +388,7 @@ namespace BL
             return result;
         }
 
-        
+
 
     }
 }

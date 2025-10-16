@@ -23,16 +23,17 @@ namespace BL
             try
             {
                 var resultQuery = _context.LoginDTO
-                .FromSqlInterpolated($"EXEC GetUserByEmail {login.Email}")
-                .AsEnumerable()
-                .SingleOrDefault();
+                    .FromSqlInterpolated($"EXEC GetUserByEmail {login.Email}")
+                    .AsEnumerable()
+                    .SingleOrDefault();
 
                 if (resultQuery != null)
                 {
+                    // El hash real viene de la base de datos
+                    var storedHashedPassword = resultQuery.Password;
 
-                    // comparar las contraseñas 
-
-                    if (login.Password == resultQuery.Password)
+                    // Verifica la contraseña ingresada contra el hash
+                    if (BL.PasswordHasher.VerifyPassword(login.Password, storedHashedPassword))
                     {
                         ML.Usuario usuarioObj = new ML.Usuario();
 
@@ -43,7 +44,6 @@ namespace BL
                         usuarioObj.Rol.Name = resultQuery.RolName;
 
                         result.Object = usuarioObj;
-
                         result.Correct = true;
                     }
                     else
@@ -51,14 +51,12 @@ namespace BL
                         result.Correct = false;
                         result.ErrorMessage = "Las credenciales son incorrectas.";
                     }
-
                 }
                 else
                 {
                     result.Correct = false;
                     result.ErrorMessage = "Las credenciales son incorrectas.";
                 }
-
             }
             catch (Exception ex)
             {

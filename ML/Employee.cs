@@ -22,6 +22,8 @@ namespace ML
 
         public bool? LeaveOrNot { get; set; }
         public List<object>? Employees { get; set; }
+        public List<object>? Errores { get; set; }
+        public List<object>? Correctos { get; set; }
 
         public ML.City? City { get; set; }
         public ML.Education? Education { get; set; }
